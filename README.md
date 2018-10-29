@@ -106,7 +106,32 @@ print(f.counter)
 
 ```
 
+### Method
+1. Instead of defining a function outside of a class definition and binding it to a class attribute, we define a method directly inside (indented) of a class definition.  
+2. A method is "just" a function which is defined inside of a class.
+3. The first parameter is used a reference to the calling instance. 
+4. This parameter is usually called self.
 
+We have seen that a method differs from a function only in two aspects:  
+1. It belongs to a class, and it is defined within a class.
+2. The first parameter in the definition of a method has to be a reference to the instance, which called the method. This parameter is usually called "self"(self is not a keyword in python).
+All the three are same :
+```
+type(x).m(x, ...)
+C.m(x, ...)
+x.m(...)
+#hi is function which except an obj.
+def hi(obj):
+    print("Hi, I am " + obj.name + "!")
+
+class Robot:
+    pass
+    
+
+x = Robot()
+x.name = "Marvin"
+hi(x)
+```
 
 ## Useful links :
 1. [Jupyter Notebook Documentation](http://jupyter-notebook-beginner-guide.readthedocs.io/en/latest/what_is_jupyter.html)
