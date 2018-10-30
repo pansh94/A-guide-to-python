@@ -132,6 +132,59 @@ x = Robot()
 x.name = "Marvin"
 hi(x)
 ```
+### The __init__ method :
+ __init__ is a method which is immediately and automatically called after an instance has been created.  
+ ```
+ class Robot:
+ 
+    def __init__(self, name=None):
+        self.name = name   
+        
+    def say_hi(self):
+        if self.name:
+            print("Hi, I am " + self.name)
+        else:
+            print("Hi, I am a robot without a name")
+    
+
+x = Robot()
+x.say_hi() #Hi, I am a robot without a name
+y = Robot("Marvin")
+y.say_hi() #Hi, I am Marvin 
+
+```
+
+### Data Abstraction, Data Encapsulation, and Information Hiding :
+**Encapsulation** is seen as the bundling of data with the methods that operate on that data. **Information hiding** on the other hand is the principle that some internal information or data is "hidden", so that it can't be accidentally changed. **Data encapsulation** via methods doesn't necessarily mean that the data is hidden.  Finally, **data abstraction** is present, if both data hiding and data encapsulation is used. This means data abstraction is the broader term.  
+**Encapsulation** generally achieve through getter setter method.
+```
+class Robot:
+ 
+    def __init__(self, name=None):
+        self.name = name   
+        
+    def say_hi(self):
+        if self.name:
+            print("Hi, I am " + self.name)
+        else:
+            print("Hi, I am a robot without a name")
+            
+    def set_name(self, name):
+        self.name = name
+        
+    def get_name(self):
+        return self.name
+    
+
+x = Robot()
+x.set_name("Henry")
+x.say_hi()
+y = Robot()
+y.set_name(x.get_name())
+print(y.get_name())
+```
+### __str__- and __repr__-Methods
+
 
 ## Useful links :
 1. [Jupyter Notebook Documentation](http://jupyter-notebook-beginner-guide.readthedocs.io/en/latest/what_is_jupyter.html)
