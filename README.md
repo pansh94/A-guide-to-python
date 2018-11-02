@@ -348,7 +348,43 @@ Robot has been destroyed
 Robot has been destroyed
 ```
 ### Class Attribute
+Class attributes are attributes which are owned by the class itself. They will be shared by all the instances of the class. Therefore they have the same value for every instance. We define class attributes outside of all the methods, usually they are placed at the top, right below the class header. But be careful, if you want to change a class attribute, you have to do it with the notation **ClassName.AttributeName**. Otherwise, you will create a new instance variable.
+```
+>>> class A:
+...     a = "I am a class attribute!"
+... 
+>>> x = A()
+>>> y = A()
+>>> x.a = "This creates a new instance attribute for x!"
+>>> y.a
+'I am a class attribute!'
+>>> A.a
+'I am a class attribute!'
+>>> A.a = "This is changing the class attribute 'a'!"
+>>> A.a
+"This is changing the class attribute 'a'!"
+>>> y.a
+"This is changing the class attribute 'a'!"
+>>> # but x.a is still the previously created instance variable:
+... 
+>>> x.a
+'This creates a new instance attribute for x!'
+>>> 
+```
+Python's class attributes and object attributes are stored in separate dictionaries, as we can see here: 
+```
+>>> x.__dict__
+{'a': 'This creates a new instance attribute for x!'}
+>>> y.__dict__
+{}
+>>> A.__dict__
+dict_proxy({'a': "This is changing the class attribute 'a'!", '__dict__': <attribute '__dict__' of 'A' objects>, '__module__': '__main__', '__weakref__': <attribute '__weakref__' of 'A' objects>, '__doc__': None})
+>>> x.__class__.__dict__
+dict_proxy({'a': "This is changing the class attribute 'a'!", '__dict__': <attribute '__dict__' of 'A' objects>, '__module__': '__main__', '__weakref__': <attribute '__weakref__' of 'A' objects>, '__doc__': None})
+>>> 
+```
 
+### Example with Class Attributes
 
 ## Useful links :
 1. [Jupyter Notebook Documentation](http://jupyter-notebook-beginner-guide.readthedocs.io/en/latest/what_is_jupyter.html)
