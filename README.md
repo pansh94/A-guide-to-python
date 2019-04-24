@@ -396,4 +396,5 @@ dict_proxy({'a': "This is changing the class attribute 'a'!", '__dict__': <attri
 7. [Matplotlib Tutorial](https://matplotlib.org/gallery.html)
 8. [Django with SQLAlchemy](https://www.compose.com/articles/using-postgresql-through-sqlalchemy/)
 9. [Docker Docs](https://docs.docker.com/engine/docker-overview/)
-
+10. [Rules how to write clear python code](https://www.python.org/dev/peps/pep-0008/)
+11. [Read this book before starting python](https://effectivepython.com/)
