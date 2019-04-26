@@ -385,6 +385,223 @@ dict_proxy({'a': "This is changing the class attribute 'a'!", '__dict__': <attri
 ```
 
 ### Example with Class Attributes
+```
+class Robot:
+
+    Three_Laws = (
+"""A robot may not injure a human being or, through inaction, allow a human being to come to harm.""",
+"""A robot must obey the orders given to it by human beings, except where such orders would conflict with the First Law.,""",
+"""A robot must protect its own existence as long as such protection does not conflict with the First or Second Law."""
+)
+
+    def __init__(self, name, build_year):
+        self.name = name
+        self.build_year = build_year
+
+    # other methods as usual
+    
+-------------------------------------------
+from robot_asimov import Robot
+for number, text in enumerate(Robot.Three_Laws):
+    print(str(number+1) + ":\n" + text)
+--------------------------------------------
+output :
+1:
+A robot may not injure a human being or, through inaction, allow a human being to come to harm.
+2:
+A robot must obey the orders given to it by human beings, except where such orders would conflict with the First Law.,
+3:
+A robot must protect its own existence as long as such protection does not conflict with the First or Second Law.
+```
+We demonstrate in the following example, how you can count instance with class attributes. All we have to do is :
+```
+class C :
+    counter = 0
+    def __init__(self):
+        type(self).counter += 1 
+    def __del__(self):
+        type(self).counter -= 1 
+if __name == "__main__" :
+    x = C()
+    print("Number of instances: : " + str(C.counter))
+    y = C()
+    print("Number of instances: : " + str(C.counter))
+    del x
+    print("Number of instances: : " + str(C.counter))
+    del y
+    print("Number of instances: : " + str(C.counter))
+------------------------------------------------------
+output :
+$ python3 counting_instances.py 
+Number of instances: : 1
+Number of instances: : 2
+Number of instances: : 1
+Number of instances: : 0
+------------------------------------------------------
+```
+
+### Static method
+Making class attribute as private, so now we will need a method to access that.
+```
+class Robot:
+    __counter = 0
+    
+    def __init__(self):
+        type(self).__counter += 1
+        
+    def RobotInstances(self):
+        return Robot.__counter
+        
+
+if __name__ == "__main__":
+    x = Robot()
+    print(x.RobotInstances())
+    y = Robot()
+    print(x.RobotInstances())
+--------------------------------------------
+```
+o/p : This will create error because If we try to invoke the method with the class name Robot.RobotInstances(), we get an error message, because it needs an instance as an argument.
+The solution consists in static methods, which don't need a reference to an instance. 
+It's easy to turn a method into a static method. All we have to do is to add a line with "@staticmethod" directly in front of the method header. It's the decorator syntax. 
+```
+class Robot:
+    __counter = 0
+    
+    def __init__(self):
+        type(self).__counter += 1
+        
+    @staticmethod
+    def RobotInstances():
+        return Robot.__counter
+        
+
+if __name__ == "__main__":
+    print(Robot.RobotInstances())
+    x = Robot()
+    print(x.RobotInstances())
+    y = Robot()
+    print(x.RobotInstances())
+    print(Robot.RobotInstances())
+------------------------------------------------------
+o/p : 
+0
+1
+2
+2
+```
+### Class method
+Static methods shouldn't be confused with class methods. Like static methods class methods are not bound to instances, but unlike static methods class methods are bound to a class. The first parameter of a class method is a reference to a class, i.e. a class object. They can be called via an instance or the class name. 
+```
+class Robot:
+    __counter = 0
+    
+    def __init__(self):
+        type(self).__counter += 1
+        
+    @classmethod
+    def RobotInstances(cls):
+        return cls, Robot.__counter
+        
+
+if __name__ == "__main__":
+    print(Robot.RobotInstances())
+    x = Robot()
+    print(x.RobotInstances())
+    y = Robot()
+    print(x.RobotInstances())
+    print(Robot.RobotInstances())
+---------------------------------------
+o/p :
+$ python3 static_methods4.py 
+<class '__main__.Robot'>, 0)
+<class '__main__.Robot'>, 1)
+<class '__main__.Robot'>, 2)
+<class '__main__.Robot'>, 2)
+```
+We have defined a static gcd function to calculate the greatest common divisor of two numbers. the greatest common divisor (gcd) of two or more integers (at least one of which is not zero), is the largest positive integer that divides the numbers without a remainder. The static method "gcd" is called by our class method "reduce" with "cls.gcd(n1, n2)". "CLS" is a reference to "fraction".
+```
+class fraction(object):
+
+    def __init__(self, n, d):
+        self.numerator, self.denominator = fraction.reduce(n, d)
+        
+
+    @staticmethod
+    def gcd(a,b):
+        while b != 0:
+            a, b = b, a%b
+        return a
+
+    @classmethod
+    def reduce(cls, n1, n2):
+        g = cls.gcd(n1, n2)
+        return (n1 // g, n2 // g)
+
+    def __str__(self):
+        return str(self.numerator)+'/'+str(self.denominator)
+------------------------------------------------------------------
+>>> from fraction1 import fraction
+>>> x = fraction(8,24)
+>>> print(x)
+1/3
+```
+We define a class "Pets" with a method "about". This class will be inherited in a subclass "Dogs" and "Cats". The method "about" will be inherited as well. We will define the method "about" as a "staticmethod" in our first implementation to show the disadvantage of this approach:
+```
+class Pets:
+    name = "pet animals"
+
+    @staticmethod
+    def about():
+        print("This class is about {}!".format(Pets.name))   
+    
+
+class Dogs(Pets):
+    name = "'man's best friends' (Frederick II)"
+
+class Cats(Pets):
+    name = "cats"
+
+p = Pets()
+p.about()
+d = Dogs()
+d.about()
+c = Cats()
+c.about()
+------------------------------------------------------------
+o/p:
+This class is about pet animals!
+This class is about pet animals!
+This class is about pet animals!
+```
+The "problem" is that the method "about" doesn't know that it has been called by an instance of the Dogs or Cats class. 
+```
+class Pets:
+    name = "pet animals"
+
+    @classmethod
+    def about(cls):
+        print("This class is about {}!".format(cls.name))
+    
+class Dogs(Pets):
+    name = "'man's best friends' (Frederick II)"
+
+class Cats(Pets):
+    name = "cats"
+
+p = Pets()
+p.about()
+
+d = Dogs()
+d.about()
+
+c = Cats()
+c.about()
+---------------------------------------------------------------
+o/p:
+This class is about pet animals!
+This class is about 'man's best friends' (Frederick II)!
+This class is about cats!
+```
 
 ## Useful links :
 1. [Jupyter Notebook Documentation](http://jupyter-notebook-beginner-guide.readthedocs.io/en/latest/what_is_jupyter.html)
