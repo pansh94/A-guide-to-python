@@ -602,7 +602,62 @@ This class is about pet animals!
 This class is about 'man's best friends' (Frederick II)!
 This class is about cats!
 ```
+### Properties
+The class with a property looks like this:
+```
+class P:
 
+    def __init__(self,x):
+        self.__x = x
+
+    @property
+    def x(self):
+        return self.__x
+
+    @x.setter
+    def x(self, x):
+        if x < 0:
+            self.__x = 0
+        elif x > 1000:
+            self.__x = 1000
+        else:
+            self.__x = x
+---------------------------------------
+>>> from p import P
+>>> p1 = P(1001)
+>>> p1.x
+1000
+>>> p1.x = -12
+>>> p1.x
+0
+>>> 
+++++++++++++++++++++++++++++++++++++++++++++++++
+class C:
+    def __init__(self):
+        self._x = None
+
+    def getx(self):
+        return self._x
+
+    def setx(self, value):
+        self._x = value
+
+    def delx(self):
+        del self._x
+
+    x = property(getx, setx, delx, "I'm the 'x' property.")
+#If c is an instance of C, c.x will invoke the getter, c.x = value will invoke the setter and del c.x the deleter.
+```
+A method which is used for getting a value is decorated with "@property", i.e. we put this line directly in front of the header. The method which has to function as the setter is decorated with "@x.setter". If the function had been called "f", we would have to decorate it with "@f.setter". 
+Two things are noteworthy: We just put the code line "self.x = x" in the __init__ method and the property method x is used to check the limits of the values. The second interesting thing is that we wrote "two" methods with the same name and a different number of parameters "def x(self)" and "def x(self,x)". We have learned in a previous chapter of our course that this is not possible. It works here due to the decorating.
+
+### Public instead of Private Attributes
+1. Will the value of "OurAtt" be needed by the possible users of our class?
+   If not, we can or should make it a private attribute.
+2. If it has to be accessed, we make it accessible as a public attribute
+3. We will define it as a private attribute with the corresponding property, if and only if we have to do some checks or 
+   transformation of the data. (As an example, you can have a look again at our class P, where the attribute has to be in the    interval between 0 and 1000, which is ensured by the property "x")
+4. Alternatively, you could use a getter and a setter, but using a property is the Pythonic way to deal with it!
 ## Useful links :
 1. [Jupyter Notebook Documentation](http://jupyter-notebook-beginner-guide.readthedocs.io/en/latest/what_is_jupyter.html)
 2. [SQLAlchemy basic tutorial](http://docs.sqlalchemy.org/en/latest/core/engines.html#database-urls) 
