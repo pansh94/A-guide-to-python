@@ -651,6 +651,114 @@ class C:
 A method which is used for getting a value is decorated with "@property", i.e. we put this line directly in front of the header. The method which has to function as the setter is decorated with "@x.setter". If the function had been called "f", we would have to decorate it with "@f.setter". 
 Two things are noteworthy: We just put the code line "self.x = x" in the __init__ method and the property method x is used to check the limits of the values. The second interesting thing is that we wrote "two" methods with the same name and a different number of parameters "def x(self)" and "def x(self,x)". We have learned in a previous chapter of our course that this is not possible. It works here due to the decorating.
 
+## Inheritance
+A class can inherit attributes and behaviour methods from another class, called the superclass. Python supports multiple inheritance too. The name BaseClassName must be defined in a scope containing the derived class definition. 
+```
+Syntax:
+class DerivedClassName(BaseClassName):
+    pass
+--------------------------------------
+class Person:
+
+    def __init__(self, first, last):
+        self.firstname = first
+        self.lastname = last
+
+    def Name(self):
+        return self.firstname + " " + self.lastname
+
+class Employee(Person):
+
+    def __init__(self, first, last, staffnum):
+        Person.__init__(self,first, last)
+        self.staffnumber = staffnum
+
+    def GetEmployee(self):
+        return self.Name() + ", " +  self.staffnumber
+
+x = Person("Marge", "Simpson")
+y = Employee("Homer", "Simpson", "1007")
+
+print(x.Name())
+print(y.GetEmployee())
+---------------------------------------
+$ python3 person.py 
+Marge Simpson
+Homer Simpson, 1007
+```
+The __init__ method of our Employee class explicitly invokes the __init__method of the Person class. We could have used super instead. super().__init__(first, last) is automatically replaced by a call to the superclasses method, in this case __init__:
+```
+    def __init__(self, first, last, staffnum):
+        super().__init__(first, last)
+        self.staffnumber = staffnum
+```
+### Overloading and Overriding
+#### Overriding
+```
+class Person:
+
+    def __init__(self, first, last):
+        self.firstname = first
+        self.lastname = last
+
+    def __str__(self):
+        return self.firstname + " " + self.lastname
+
+class Employee(Person):
+
+    def __init__(self, first, last, staffnum):
+        super().__init__(first, last)
+        self.staffnumber = staffnum
+
+
+x = Person("Marge", "Simpson")
+y = Employee("Homer", "Simpson", "1007")
+
+print(x)
+print(y)
+--------------------------------------------------
+o/p : python3 person2.py 
+Marge Simpson
+Homer Simpson
+```
+First of all, we can see that if we print an instance of the Employee class, the __str__ method of Person is used. This is due to inheritance. The only problem we have now is the fact that the output of "print(y)" is not the same as the "print(y.GetEmployee())". This means that our Employee class needs its own __str__ method. We could write it like this:
+```
+def __str__(self):
+        return super().__str__() + ", " +  self.staffnumber
+```
+We have overridden the method __str__ from Person in Employee. By the way, we have overridden __init__ also. Method overriding is an object-oriented programming feature that allows a subclass to provide a different implementation of a method that is already defined by its superclass or by one of its superclasses. The implementation in the subclass overrides the implementation of the superclass by providing a method with the same name, same parameters or signature, and same return type as the method of the parent class. 
+
+#### Overloading
+The second definition of f with two parameters redefines or overrides the first definition with one argument. Overriding means that the first definition is not available anymore. This explains the error message: 
+```
+>>> def f(n):
+...     return n + 42
+... 
+>>> def f(n,m):
+...     return n + m + 42
+... 
+>>> f(3,4)
+49
+>>> f(3)
+Traceback (most recent call last):
+  File "<stdin>", line 1, in <module>
+TypeError: f() takes exactly 2 arguments (1 given)
+>>> 
+```
+If we need such a behaviour, we can simulate it with default parameters: 
+```
+def f(n, m=None):
+    if m:
+        return n + m +42
+    else:
+        return n + 42
+        
+def f(*x):
+    if len(x) == 1:
+        return x[0] + 42
+    else: 
+        return x[0] + x[1] + 42
+```
 ### Public instead of Private Attributes
 1. Will the value of "OurAtt" be needed by the possible users of our class?
    If not, we can or should make it a private attribute.
@@ -658,6 +766,398 @@ Two things are noteworthy: We just put the code line "self.x = x" in the __init_
 3. We will define it as a private attribute with the corresponding property, if and only if we have to do some checks or 
    transformation of the data. (As an example, you can have a look again at our class P, where the attribute has to be in the    interval between 0 and 1000, which is ensured by the property "x")
 4. Alternatively, you could use a getter and a setter, but using a property is the Pythonic way to deal with it!
+
+## Multiple Inheritance
+The critics point out that multiple inheritance comes along with a high level of complexity and ambiguity in situations such as the diamond problem.
+A class definition, where a child class SubClassName inherits from the parent classes BaseClass1, BaseClass2, BaseClass3, and so on, looks like this: 
+```
+class SubclassName(BaseClass1, BaseClass2, BaseClass3, ...):
+    pass
+```
+We are implementing a clock and a calander class and will inherit those in third class.
+```
+class Clock(object):
+
+    def __init__(self, hours, minutes, seconds):
+        """
+        The paramaters hours, minutes and seconds have to be 
+        integers and must satisfy the following equations:
+        0 <= h < 24
+        0 <= m < 60
+        0 <= s < 60
+        """
+
+        self.set_Clock(hours, minutes, seconds)
+
+    def set_Clock(self, hours, minutes, seconds):
+        """
+        The parameters hours, minutes and seconds have to be 
+        integers and must satisfy the following equations:
+        0 <= h < 24
+        0 <= m < 60
+        0 <= s < 60
+        """
+
+        if type(hours) == int and 0 <= hours and hours < 24:
+            self._hours = hours
+        else:
+            raise TypeError("Hours have to be integers between 0 and 23!")
+        if type(minutes) == int and 0 <= minutes and minutes < 60:
+            self.__minutes = minutes 
+        else:
+            raise TypeError("Minutes have to be integers between 0 and 59!")
+        if type(seconds) == int and 0 <= seconds and seconds < 60:
+            self.__seconds = seconds
+        else:
+            raise TypeError("Seconds have to be integers between 0 and 59!")
+
+    def __str__(self):
+        return "{0:02d}:{1:02d}:{2:02d}".format(self._hours,
+                                                self.__minutes,
+                                                self.__seconds)
+
+    def tick(self):
+        """
+        This method lets the clock "tick", this means that the 
+        internal time will be advanced by one second.
+
+        Examples:
+        >>> x = Clock(12,59,59)
+        >>> print(x)
+        12:59:59
+        >>> x.tick()
+        >>> print(x)
+        13:00:00
+        >>> x.tick()
+        >>> print(x)
+        13:00:01
+        """
+
+        if self.__seconds == 59:
+            self.__seconds = 0
+            if self.__minutes == 59:
+                self.__minutes = 0
+                if self._hours == 23:
+                    self._hours = 0
+                else:
+                    self._hours += 1
+            else:
+                self.__minutes += 1
+        else:
+            self.__seconds += 1
+
+
+if __name__ == "__main__":
+    x = Clock(23,59,59)
+    print(x)
+    x.tick()
+    print(x)
+    y = str(x)
+    print(type(y))
+----------------------------------------------
+o/p:
+$ python3 clock.py 
+23:59:59
+00:00:00
+<class 'str'>
+```
+Calander class :
+Check for leap yr :
+1. If a year is divisible by 400, it is a leap year.
+2. If a year is not divisible by 400 but by 100, it is not a leap year.
+3. A year number which is divisible by 4 but not by 100, it is a leap year.
+4. All other year numbers are common years, i.e. no leap years.
+```
+class Calendar(object):
+
+    months = (31,28,31,30,31,30,31,31,30,31,30,31)
+    date_style = "British"
+
+    @staticmethod
+    def leapyear(year):
+        """ 
+        The method leapyear returns True if the parameter year
+        is a leap year, False otherwise
+        """
+        if not year % 4 == 0:
+            return False
+        elif not year % 100 == 0:
+            return True
+        elif not year % 400 == 0:
+            return False
+        else:
+            return True
+
+
+    def __init__(self, d, m, y):
+        """
+        d, m, y have to be integer values and year has to be 
+        a four digit year number
+        """
+
+        self.set_Calendar(d,m,y)
+
+
+    def set_Calendar(self, d, m, y):
+        """
+        d, m, y have to be integer values and year has to be 
+        a four digit year number
+        """
+
+        if type(d) == int and type(m) == int and type(y) == int:
+            self.__days = d
+            self.__months = m
+            self.__years = y
+        else:
+            raise TypeError("d, m, y have to be integers!")
+
+
+    def __str__(self):
+        if Calendar.date_style == "British":
+            return "{0:02d}/{1:02d}/{2:4d}".format(self.__days,
+                                                   self.__months,
+                                                   self.__years)
+        else: 
+            # assuming American style
+            return "{0:02d}/{1:02d}/{2:4d}".format(self.__months,
+                                                   self.__days,
+                                                   self.__years)
+
+
+
+    def advance(self):
+        """
+        This method advances to the next date.
+        """
+
+        max_days = Calendar.months[self.__months-1]
+        if self.__months == 2 and Calendar.leapyear(self.__years):
+            max_days += 1
+        if self.__days == max_days:
+            self.__days= 1
+            if self.__months == 12:
+                self.__months = 1
+                self.__years += 1
+            else:
+                self.__months += 1
+        else:
+            self.__days += 1
+
+
+if __name__ == "__main__":
+    x = Calendar(31,12,2012)
+    print(x, end=" ")
+    x.advance()
+    print("after applying advance: ", x)
+    print("2012 was a leapyear:")
+    x = Calendar(28,2,2012)
+    print(x, end=" ")
+    x.advance()
+    print("after applying advance: ", x)
+    x = Calendar(28,2,2013)
+    print(x, end=" ")
+    x.advance()
+    print("after applying advance: ", x)
+    print("1900 no leapyear: number divisible by 100 but not by 400: ")
+    x = Calendar(28,2,1900)
+    print(x, end=" ")
+    x.advance()
+    print("after applying advance: ", x)
+    print("2000 was a leapyear, because number divisibe by 400: ")
+    x = Calendar(28,2,2000)
+    print(x, end=" ")
+    x.advance()
+    print("after applying advance: ", x)
+    print("Switching to American date style: ")
+    Calendar.date_style = "American"
+    print("after applying advance: ", x)  
+-----------------------------------------------------------------
+o/p:
+$ python3 calendar.py
+31.12.2012 after applying advance:  01.01.2013
+2012 was a leapyear:
+28.02.2012 after applying advance:  29.02.2012
+28.02.2013 after applying advance:  01.03.2013
+1900 no leapyear: number divisible by 100 but not by 400: 
+28.02.1900 after applying advance:  01.03.1900
+2000 was a leapyear, because number divisibe by 400: 
+28.02.2000 after applying advance:  29.02.2000
+Switching to American date style: 
+after applying advance:  02/29/2000
+```
+CalendarClock, which will inherit from both Clock and Calendar. The method "tick" of Clock will have to be overridden. However, the new tick method of CalendarClock has to call the tick method of Clock: Clock.tick(self) 
+```
+from clock import Clock
+from calendar import Calendar
+
+
+class CalendarClock(Clock, Calendar):
+    """ 
+        The class CalendarClock implements a clock with integrated 
+        calendar. It's a case of multiple inheritance, as it inherits 
+        both from Clock and Calendar      
+    """
+
+    def __init__(self,day, month, year, hour, minute, second):
+        Clock.__init__(self,hour, minute, second)
+        Calendar.__init__(self,day, month, year)
+
+
+    def tick(self):
+        """
+        advance the clock by one second
+        """
+        previous_hour = self._hours
+        Clock.tick(self)
+        if (self._hours < previous_hour): 
+            self.advance()
+
+    def __str__(self):
+        return Calendar.__str__(self) + ", " + Clock.__str__(self)
+
+
+if __name__ == "__main__":
+    x = CalendarClock(31,12,2013,23,59,59)
+    print("One tick from ",x, end=" ")
+    x.tick()
+    print("to ", x)
+
+    x = CalendarClock(28,2,1900,23,59,59)
+    print("One tick from ",x, end=" ")
+    x.tick()
+    print("to ", x)
+
+    x = CalendarClock(28,2,2000,23,59,59)
+    print("One tick from ",x, end=" ")
+    x.tick()
+    print("to ", x)
+
+    x = CalendarClock(7,2,2013,13,55,40)
+    print("One tick from ",x, end=" ")
+    x.tick()
+    print("to ", x)
+-----------------------------------------------------------------------
+o/p:
+$ python3 calendar_clock.py 
+One tick from  31/12/2013, 23:59:59 to  01/01/2014, 00:00:00
+One tick from  28/02/1900, 23:59:59 to  01/03/1900, 00:00:00
+One tick from  28/02/2000, 23:59:59 to  29/02/2000, 00:00:00
+One tick from  07/02/2013, 13:55:40 to  07/02/2013, 13:55:41
+```
+### The Diamond Problem or the ,,deadly diamond of death''
+Is the generally used term for an ambiguity that arises when two classes B and C inherit from a superclass A, and another class D inherits from both B and C. If there is a method "m" in A that B or C (or even both of them) )has overridden, and furthermore, if does not override this method, then the question is which version of the method does D inherit? It could be the one from A, B or C.
+```
+class A:
+    def m(self):
+        print("m of A called")
+
+class B(A):
+    def m(self):
+        print("m of B called")
+    
+class C(A):
+    def m(self):
+        print("m of C called")
+
+class D(B,C):
+    pass
+```
+If you call the method m on an instance x of D, i.e. x.m(), we will get the output "m of B called". And if you change the order B,C into C,B then o/p will be "m of C called". 
+
+### super and MRO
+The order is defined by the so-called "Method Resolution Order" or in short MRO. To solve Diamond problem. We will extend our previous example, so that every class defines its own method m: 
+```
+class A:
+    def m(self):
+        print("m of A called")
+
+class B(A):
+    def m(self):
+        print("m of B called")
+    
+class C(A):
+    def m(self):
+        print("m of C called")
+
+class D(B,C):
+    def m(self):
+        print("m of D called")
+```
+We can see that only the code of the method m of D will be executed. We can also explicitly call the methods m of the other classes via the class name, as we demonstrate in the following interactive Python session: 
+```
+from super1 import A,B,C,D
+>>> x = D()
+>>> B.m(x)
+m of B called
+>>> C.m(x)
+m of C called
+>>> A.m(x)
+m of A called
+----------------------------------
+class D(B,C):
+    def m(self):
+        print("m of D called")
+        B.m(self)
+        C.m(self)
+        A.m(self)
+```
+The optimal way to solve the problem, which is the "super" pythonic way, consists in calling the super function:
+```
+class A:
+    def m(self):
+        print("m of A called")
+
+class B(A):
+    def m(self):
+        print("m of B called")
+        super().m()
+    
+class C(A):
+    def m(self):
+        print("m of C called")
+        super().m()
+
+class D(B,C):
+    def m(self):
+        print("m of D called")
+        super().m()
+---------------------------------------
+>>> from super5 import D
+>>> x = D()
+>>> x.m()
+m of D called
+m of B called
+m of C called
+m of A called
+```
+
+### Polymorphism
+Polymorphic functions or methods can be applied to arguments of different types, and they can behave differently depending on the type of the arguments to which they are applied. We can also define the same function name with a varying number of parameter.
+Python is implicitly polymorphic. We can apply our previously defined function f even to lists, strings or other types, which can be printed: 
+```
+def f(x, y):
+    print("values: ", x, y)
+
+f(42, 43)
+f(42, 43.7) 
+f(42.3, 43)
+f(42.0, 43.9)
+>>> f([3,5,6],(3,5))
+values:  [3, 5, 6] (3, 5)
+>>> f("A String", ("A tuple", "with Strings"))
+values:  A String ('A tuple', 'with Strings')
+>>> f({2,3,9}, {"a":3.4,"b":7.8, "c":9.04})
+values:  {9, 2, 3} {'a': 3.4, 'c': 9.04, 'b': 7.8}
+```
+
+## Magic Methods and Operator Overloading
+They are the methods with this clumsy syntax, i.e. the double underscores at the beginning and the end. "Double underscore init double underscore" is a lot better, but the ideal way is "dunder init dunder"1 That's why magic methods methods are sometimes called dunder methods! 
+The mechanism works like this: If we have an expression "x + y" and x is an instance of class K, then Python will check the class definition of K. If K has a method __add__ it will be called with x.__add__(y), otherwise we will get an error message.
+
+## Slots
+##### Avoiding Dynamically Created Attributes
+
+
 ## Useful links :
 1. [Jupyter Notebook Documentation](http://jupyter-notebook-beginner-guide.readthedocs.io/en/latest/what_is_jupyter.html)
 2. [SQLAlchemy basic tutorial](http://docs.sqlalchemy.org/en/latest/core/engines.html#database-urls) 
