@@ -1198,6 +1198,8 @@ print(x.val)
 
 x.new = "not possible"
 ```
+## Difference b/w class method and factory method.
+[Difference b/w class and static method with an example](https://www.geeksforgeeks.org/class-method-vs-static-method-python/)
 
 
 ## Useful links :
