@@ -1201,6 +1201,35 @@ x.new = "not possible"
 ## Difference b/w class method and factory method.
 [Difference b/w class and static method with an example](https://www.geeksforgeeks.org/class-method-vs-static-method-python/)
 
+## Metaclasses
+A metaclass is a class whose instances are classes. Metaclasses are defined like any other Python class, but they are classes that inherit from "type". If no "metaclass" keyword is passed after the base classes (there may be no base classes either) of the class header, type() (i.e. __call__ of type) will be called. If a metaclass keyword is used on the other hand, the class assigned to it will be called instead of type.
+We have learned in our chapter "Type and Class Relationship" that after the class definition has been processed, Python calls
+```
+type(classname, superclasses, attributes_dict)
+```
+#### Creating singleton using metaclasses
+The singleton pattern is a design pattern that restricts the instantiation of a class to one object.
+```
+class Singleton(type):
+    _instances = {}
+    def __call__(cls, *args, **kwargs):
+        if cls not in cls._instances:
+            cls._instances[cls] = super(Singleton, cls).__call__(*args, **kwargs)
+        return cls._instances[cls]
+    
+    
+class SingletonClass(metaclass=Singleton):
+    pass
+class RegularClass():
+    pass
+x = SingletonClass()
+y = SingletonClass()
+print(x == y)
+x = RegularClass()
+y = RegularClass()
+print(x == y)
+```
+
 
 ## Useful links :
 1. [Jupyter Notebook Documentation](http://jupyter-notebook-beginner-guide.readthedocs.io/en/latest/what_is_jupyter.html)
