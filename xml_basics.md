@@ -134,4 +134,44 @@ the data itself should be stored as elements. We use id for this.
 </messages>
 ```
 
+### XML Namespace
+XML Namespaces provide a method to avoid element name conflicts.
+```
+=>XML1
+<table>
+  <tr>
+    <td>Apples</td>
+    <td>Bananas</td>
+  </tr>
+</table>
+----------------------------
+=>XML2
+<table>
+  <name>African Coffee Table</name>
+  <width>80</width>
+  <length>120</length>
+</table>
+```
+When you mix xml1 and xml2, it will create conflict because of table tag.
+#### Solving name conflict using prefix
+When using prefixes in XML, a namespace for the prefix must be defined. The namespace can be defined by an xmlns attribute in the start tag of an element. 
+```
+<h:table xmlns:h="http://www.w3.org/TR/html4/">
+  <h:tr>
+    <h:td>Apples</h:td>
+    <h:td>Bananas</h:td>
+  </h:tr>
+</h:table>
+
+<f:table xmlns:f="https://www.w3schools.com/furniture">
+  <f:name>African Coffee Table</f:name>
+  <f:width>80</f:width>
+  <f:length>120</f:length>
+</f:table>
+```
+Namespaces can also be declared in the XML root element.
+```
+<root xmlns:h="http://www.w3.org/TR/html4/"
+xmlns:f="https://www.w3schools.com/furniture">
+```
 
