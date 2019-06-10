@@ -59,6 +59,7 @@ There are 5 pre-defined entity references in XML:
 * &quot; -> quotation mark(")
 ```
 7. Comments in xml
+                                                                                
 ```
 <!-- comments -->
 ```
@@ -70,9 +71,11 @@ contain text, attribute, other element or mix of these.
 1. <title>, <author>, <year>, and <price> have text content because they contain text (like 29.99).
 2. <bookstore> and <book> have element contents, because they contain elements.
 3. <book> has an attribute (category="children").
+  
 ### Empty xml element
 Empty elemnt can have attribute.
 use <element /> or <element></element>
+
 ### Naming rules
 1. Element name are case sensitive.
 2. Element names must start with a letter or underscore
