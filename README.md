@@ -463,6 +463,9 @@ if __name__ == "__main__":
 o/p : This will create error because If we try to invoke the method with the class name Robot.RobotInstances(), we get an error message, because it needs an instance as an argument.
 The solution consists in static methods, which don't need a reference to an instance. 
 It's easy to turn a method into a static method. All we have to do is to add a line with "@staticmethod" directly in front of the method header. It's the decorator syntax. 
+Note :
+1. Static methods are bound to a class not a object.
+2. Static function use as a Utility functins like perform very common task like read/write in file, open/close db.
 ```
 class Robot:
     __counter = 0
@@ -1198,7 +1201,7 @@ print(x.val)
 
 x.new = "not possible"
 ```
-## Difference b/w class method and factory method.
+## Difference b/w class method and static method.
 [Difference b/w class and static method with an example](https://www.geeksforgeeks.org/class-method-vs-static-method-python/)
 
 ## Metaclasses
